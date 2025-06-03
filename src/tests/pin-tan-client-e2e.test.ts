@@ -1,6 +1,5 @@
 /* tslint:disable:no-console */
 import { expect, test } from "bun:test";
-import banks from "fints-institute-db";
 import * as fs from "fs";
 import { TanRequiredError } from "../errors/tan-required-error";
 import { PinTanClient } from "../pin-tan-client";
@@ -9,7 +8,7 @@ import { SEPAAccount } from "../types";
 const name = process.env.FINTS_USER;
 const pin = process.env.FINTS_PASSWORD;
 const blz = process.env.FINTS_BLZ;
-const url = process.env.FINTS_URL || banks.find((bank) => bank.blz === process.env.FINTS_BLZ)?.pinTanURL;
+const url = process.env.FINTS_URL;
 
 // Skip E2E tests if environment variables are not set
 const skipIfMissingEnv = !name || !pin || !blz || !url;
