@@ -1,6 +1,6 @@
-import { format } from "date-fns";
 import fetchMock from "fetch-mock";
 import { readFileSync } from "fs";
+import { formatDate } from "../date-utils";
 import { Format } from "../format";
 import { PinTanClient } from "../pin-tan-client";
 import { decodeBase64, encodeBase64 } from "../utils";
@@ -14,8 +14,8 @@ const productId = "fints";
 let client: PinTanClient;
 
 beforeEach(() => {
-    jest.spyOn(Format, "date").mockImplementation((date) => (date ? format(date, "HHMMss") : "20180101"));
-    jest.spyOn(Format, "time").mockImplementation((time) => (time ? format(time, "HHMMss") : "120000"));
+    jest.spyOn(Format, "date").mockImplementation((date) => (date ? formatDate(date, "yyyyMMdd") : "20180101"));
+    jest.spyOn(Format, "time").mockImplementation((time) => (time ? formatDate(time, "HHMMss") : "120000"));
     jest.spyOn(Math, "random").mockReturnValue(0.5);
     client = new PinTanClient({ blz, name, pin, url, productId });
 });

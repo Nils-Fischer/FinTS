@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatDate } from "./date-utils";
 import { escapeFinTS, leftPad } from "./utils";
 
 /**
@@ -14,7 +14,7 @@ export const Format = {
      */
     date(date?: Date) {
         const dateToFormat = date ? date : new Date();
-        return format(dateToFormat, "yyyMMdd");
+        return formatDate(dateToFormat, "yyyyMMdd");
     },
     /**
      * Format a binary string with a length specification.
@@ -86,7 +86,7 @@ export const Format = {
      */
     time(date?: Date) {
         const dateToFormat = date ? date : new Date();
-        return format(dateToFormat, "HHMMss");
+        return formatDate(dateToFormat, "HHMMss");
     },
     /**
      * Return an empty string.

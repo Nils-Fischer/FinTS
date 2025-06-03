@@ -5,7 +5,6 @@ export * from "./errors/response-error";
 export * from "./errors/tan-required-error";
 export * from "./format";
 export * from "./http-connection";
-export * from "./logger";
 export * from "./mt940-86-structured";
 export * from "./parse";
 export * from "./pin-tan-client";

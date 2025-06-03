@@ -1,5 +1,3 @@
-import "isomorphic-fetch";
-import { verbose } from "./logger";
 import { Request } from "./request";
 import { Response } from "./response";
 import { Connection } from "./types";
@@ -30,9 +28,9 @@ export class HttpConnection extends ConnectionConfig implements Connection {
 
     public async send(request: Request): Promise<Response> {
         const { url } = this;
-        verbose(`Sending Request: ${request}`);
         if (this.debug) {
-            verbose(`Parsed Request:\n${request.debugString}`);
+            console.log(`Sending Request: ${request}`);
+            console.log(`Parsed Request:\n${request.debugString}`);
         }
         const httpRequest = await fetch(url, {
             method: "POST",
@@ -43,11 +41,11 @@ export class HttpConnection extends ConnectionConfig implements Connection {
         }
 
         const responseString = decodeBase64(await httpRequest.text());
-        verbose(`Received Response: ${responseString}`);
-        const response = new Response(responseString);
         if (this.debug) {
-            verbose(`Parsed Response:\n${response.debugString}`);
+            console.log(`Received Response: ${responseString}`);
+            console.log(`Parsed Response:\n${new Response(responseString).debugString}`);
         }
+        const response = new Response(responseString);
         return response;
     }
 }

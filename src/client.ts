@@ -1,4 +1,3 @@
-import "isomorphic-fetch";
 import { read } from "mt940-js";
 import { Dialog, DialogConfig } from "./dialog";
 import { parse86Structured } from "./mt940-86-structured";
