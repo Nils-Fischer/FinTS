@@ -1,9 +1,22 @@
+import { afterAll, beforeAll } from "bun:test";
 import { Format } from "../../format";
 import { HNVSK } from "../hnvsk";
 import { testSegment } from "./utils";
 
-jest.spyOn(Format, "date").mockReturnValueOnce("20180907");
-jest.spyOn(Format, "time").mockReturnValueOnce("080000");
+let originalFormatDate: typeof Format.date;
+let originalFormatTime: typeof Format.time;
+
+beforeAll(() => {
+    originalFormatDate = Format.date;
+    originalFormatTime = Format.time;
+    Format.date = () => "20180907";
+    Format.time = () => "080000";
+});
+
+afterAll(() => {
+    Format.date = originalFormatDate;
+    Format.time = originalFormatTime;
+});
 
 testSegment(
     HNVSK,

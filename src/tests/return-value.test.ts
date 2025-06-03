@@ -1,3 +1,4 @@
+import { expect, test } from "bun:test";
 import { ReturnValue } from "../return-value";
 
 test("success", () => {

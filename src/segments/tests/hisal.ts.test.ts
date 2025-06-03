@@ -22,7 +22,7 @@ testSegment(
                 segNo: 5,
                 version: 5,
                 reference: 3,
-                account: { accountNumber, blz, iban: null, bic: null, subAccount: "" },
+                account: { accountNumber, blz, iban: "", bic: "", subAccount: "" },
                 productName: "Giro-Plus",
                 currency: "EUR",
                 bookedBalance,

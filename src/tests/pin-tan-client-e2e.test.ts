@@ -1,4 +1,5 @@
 /* tslint:disable:no-console */
+import { expect, test } from "bun:test";
 import banks from "fints-institute-db";
 import * as fs from "fs";
 import { TanRequiredError } from "../errors/tan-required-error";
@@ -8,7 +9,10 @@ import { SEPAAccount } from "../types";
 const name = process.env.FINTS_USER;
 const pin = process.env.FINTS_PASSWORD;
 const blz = process.env.FINTS_BLZ;
-const url = banks.find((bank) => bank.blz === process.env.FINTS_BLZ)?.pinTanURL || process.env.FINTS_URL;
+const url = process.env.FINTS_URL || banks.find((bank) => bank.blz === process.env.FINTS_BLZ)?.pinTanURL;
+
+// Skip E2E tests if environment variables are not set
+const skipIfMissingEnv = !name || !pin || !blz || !url;
 
 const productId = "9FA6681DEC0CF3046BFC2F8A6";
 
@@ -19,7 +23,12 @@ const productId = "9FA6681DEC0CF3046BFC2F8A6";
  */
 
 test("get accounts", async () => {
-    const client = new PinTanClient({ blz, name, pin, url, productId, debug: true });
+    if (skipIfMissingEnv) {
+        console.log("Skipping E2E test - missing environment variables (FINTS_USER, FINTS_PASSWORD, FINTS_BLZ)");
+        return;
+    }
+
+    const client = new PinTanClient({ blz: blz!, name: name!, pin: pin!, url: url!, productId, debug: true });
     try {
         const accounts = await client.accounts();
         expect(accounts.length).toBeGreaterThan(0);
@@ -35,7 +44,12 @@ test("get accounts", async () => {
 }, 600000);
 
 test("get statements", async () => {
-    const client = new PinTanClient({ blz, name, pin, url, productId, debug: true });
+    if (skipIfMissingEnv) {
+        console.log("Skipping E2E test - missing environment variables");
+        return;
+    }
+
+    const client = new PinTanClient({ blz: blz!, name: name!, pin: pin!, url: url!, productId, debug: true });
     const account: SEPAAccount = JSON.parse((fs.readFileSync("/tmp/account.json") as Buffer).toString());
     const startDate = new Date("2019-09-27T12:00:00Z");
     const endDate = new Date("2019-12-27T12:00:00Z");
@@ -55,7 +69,12 @@ test("get statements", async () => {
 }, 600000);
 
 test("complete statements", async () => {
-    const client = new PinTanClient({ blz, name, pin, url, productId, debug: true });
+    if (skipIfMissingEnv) {
+        console.log("Skipping E2E test - missing environment variables");
+        return;
+    }
+
+    const client = new PinTanClient({ blz: blz!, name: name!, pin: pin!, url: url!, productId, debug: true });
     const tan = "492857";
 
     try {

@@ -12,7 +12,7 @@ testSegment(
     HKKAZ,
     [
         {
-            serialized: "HKKAZ:3:5+01234::280:12345678+N+20181010+20181101++8'",
+            serialized: "HKKAZ:3:5+01234::280:12345678+N+20180907+20180907++8'",
             structured: {
                 type: "HKKAZ",
                 segNo: 3,
@@ -24,7 +24,7 @@ testSegment(
             },
         },
         {
-            serialized: "HKKAZ:3:7+DE27100777770209299700:DEUTDEFF500:01234::280:12345678+N+20181010+20181101++8'",
+            serialized: "HKKAZ:3:7+DE27100777770209299700:DEUTDEFF500:01234::280:12345678+N+20180907+20180907++8'",
             structured: {
                 type: "HKKAZ",
                 segNo: 3,

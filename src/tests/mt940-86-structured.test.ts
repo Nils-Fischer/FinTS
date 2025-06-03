@@ -1,3 +1,4 @@
+import { describe, expect, test } from "bun:test";
 import { is86Structured, parse86Structured } from "../mt940-86-structured";
 
 const testData = [
