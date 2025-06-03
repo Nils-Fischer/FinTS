@@ -159,28 +159,28 @@ export class TanMethod {
     constructor(version: number, config?: string[]) {
         this.version = version;
         const argumentList = tanMethodArgumentMap.get(version);
-        const map = argumentList.reduce((result, argumentName, index) => {
-            result.set(argumentName, config[index]);
+        const map = (argumentList || []).reduce((result, argumentName, index) => {
+            result.set(argumentName, (config || [])[index]);
             return result;
         }, new Map<string, string>());
         this.allowedFormat = map.get("allowedFormat");
-        this.cancellable = Parse.bool(map.get("cancellable"));
-        this.challengeClassRequired = Parse.bool(map.get("challengeClassRequired"));
-        this.challengeValueRequired = Parse.bool(map.get("challengeValueRequired"));
-        this.challengeStructured = Parse.bool(map.get("challengeStructured"));
+        this.cancellable = Parse.bool(map.get("cancellable") || "");
+        this.challengeClassRequired = Parse.bool(map.get("challengeClassRequired") || "");
+        this.challengeValueRequired = Parse.bool(map.get("challengeValueRequired") || "");
+        this.challengeStructured = Parse.bool(map.get("challengeStructured") || "");
         this.descriptionRequired = map.get("descriptionRequired");
-        this.hhdUcRequired = Parse.bool(map.get("hhdUcRequired"));
+        this.hhdUcRequired = Parse.bool(map.get("hhdUcRequired") || "");
         this.initializationMode = map.get("initializationMode");
-        this.maxLengthInput = Parse.num(map.get("maxLengthInput"));
-        this.maxLengthReturnvalue = Parse.num(map.get("maxLengthReturnvalue"));
-        this.multiple = Parse.bool(map.get("multiple"));
+        this.maxLengthInput = Parse.num(map.get("maxLengthInput") || "");
+        this.maxLengthReturnvalue = Parse.num(map.get("maxLengthReturnvalue") || "");
+        this.multiple = Parse.bool(map.get("multiple") || "");
         this.name = map.get("name");
-        this.numberOfSupportedLists = Parse.num(map.get("numberOfSupportedLists"));
+        this.numberOfSupportedLists = Parse.num(map.get("numberOfSupportedLists") || "");
         this.principalAccountRequired = map.get("principalAccountRequired") === "2";
         this.securityFunction = map.get("securityFunction");
         this.smsChargeAccountRequired = map.get("smsChargeAccountRequired") === "1";
-        this.supportedMediaNumber = Parse.num(map.get("supportedMediaNumber"));
-        this.tanListNumberRequired = Parse.bool(map.get("tanListNumberRequired"));
+        this.supportedMediaNumber = Parse.num(map.get("supportedMediaNumber") || "");
+        this.tanListNumberRequired = Parse.bool(map.get("tanListNumberRequired") || "");
         this.tanProcess = map.get("tanProcess");
         this.tanTimeDialogAssociation = map.get("tanTimeDialogAssociation");
         this.techId = map.get("techId");

@@ -1,7 +1,7 @@
+import { COMPRESSION_NONE, COUNTRY_CODE, SECURITY_SUPPLIER_ROLE } from "../constants";
 import { Format } from "../format";
 import { Parse } from "../parse";
 import { SegmentClass } from "./segment";
-import { SECURITY_SUPPLIER_ROLE, COUNTRY_CODE, COMPRESSION_NONE } from "../constants";
 
 export class HNVSKProps {
     public segNo: number;
@@ -40,7 +40,7 @@ export class HNVSK extends SegmentClass(HNVSKProps) {
     }
 
     protected deserialize(input: string[][]) {
-        const [ [profile, profileVersion] ] = input;
+        const [[profile, profileVersion]] = input;
         if (profile !== "PIN") {
             throw new Error(`Unsupported profile: ${profile}`);
         }

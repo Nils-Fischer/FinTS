@@ -1,6 +1,6 @@
+import { COUNTRY_CODE } from "../constants";
 import { Format } from "../format";
 import { SegmentClass } from "./segment";
-import { COUNTRY_CODE } from "../constants";
 
 export class HKSPAProps {
     public blz?: string;
@@ -21,13 +21,10 @@ export class HKSPA extends SegmentClass(HKSPAProps) {
 
     protected serialize() {
         const { accNo, subAccFeature, blz } = this;
-        return accNo ? [
-            Format.num(accNo),
-            subAccFeature,
-            Format.num(COUNTRY_CODE),
-            blz,
-        ] : [];
+        return accNo ? [Format.num(accNo), subAccFeature || "", Format.num(COUNTRY_CODE), blz || ""] : [];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

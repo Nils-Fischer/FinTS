@@ -1,5 +1,5 @@
-import { SegmentClass } from "./segment";
 import { Parse } from "../parse";
+import { SegmentClass } from "./segment";
 
 export class HIKAZSProps {
     public segNo: number;
@@ -14,10 +14,12 @@ export class HIKAZSProps {
 export class HIKAZS extends SegmentClass(HIKAZSProps) {
     public type = "HIKAZS";
 
-    protected serialize(): string[][] { throw new Error("Not implemented."); }
+    protected serialize(): string[][] {
+        throw new Error("Not implemented.");
+    }
 
     protected deserialize(input: string[][]) {
-        const [ [ maxRequestCount ], [ minSignatures ] ] = input;
+        const [[maxRequestCount], [minSignatures]] = input;
         this.minSignatures = Parse.num(minSignatures);
         this.maxRequestCount = Parse.num(maxRequestCount);
     }

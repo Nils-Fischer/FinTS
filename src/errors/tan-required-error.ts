@@ -11,7 +11,7 @@ export class TanRequiredError extends Error {
         transactionReference: string,
         challengeText: string,
         challengeMedia: Buffer,
-        dialog: Dialog,
+        dialog: Dialog
     ) {
         super(message);
         this.transactionReference = transactionReference;

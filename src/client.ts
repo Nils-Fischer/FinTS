@@ -1,12 +1,12 @@
 import "isomorphic-fetch";
+import { read } from "mt940-js";
 import { Dialog, DialogConfig } from "./dialog";
+import { parse86Structured } from "./mt940-86-structured";
 import { Parse } from "./parse";
-import { Segment, HKSPA, HISPA, HKKAZ, HIKAZ, HKSAL, HISAL, HKCDB, HICDB, HKTAN } from "./segments";
 import { Request } from "./request";
 import { Response } from "./response";
-import { SEPAAccount, Statement, Balance, StandingOrder } from "./types";
-import { read } from "mt940-js";
-import { parse86Structured } from "./mt940-86-structured";
+import { HICDB, HIKAZ, HISAL, HISPA, HKCDB, HKKAZ, HKSAL, HKSPA, HKTAN, Segment } from "./segments";
+import { Balance, SEPAAccount, StandingOrder, Statement } from "./types";
 
 /**
  * An abstract class for communicating with a fints server.
@@ -64,7 +64,7 @@ export abstract class Client {
         await dialog.sync();
         await dialog.init();
         let touchdowns: Map<string, string>;
-        let touchdown: string;
+        let touchdown: string | undefined = "";
         const responses: Response[] = [];
         do {
             const request = this.createRequest(dialog, [
@@ -72,7 +72,7 @@ export abstract class Client {
                     segNo: 3,
                     version: dialog.hisalsVersion,
                     account,
-                    touchdown,
+                    touchdown: touchdown || "",
                 }),
             ]);
             const response = await dialog.send(request);
@@ -84,10 +84,10 @@ export abstract class Client {
         const segments: HISAL[] = responses.reduce((result, response: Response) => {
             result.push(...response.findSegments(HISAL));
             return result;
-        }, []);
+        }, [] as HISAL[]);
         const hisal: HISAL = segments.find(
-            (s) => s.account.accountNumber === account.accountNumber && s.account.blz === account.blz,
-        );
+            (s) => s.account.accountNumber === account.accountNumber && s.account.blz === account.blz
+        )!;
         return {
             account,
             availableBalance: hisal.availableBalance,
@@ -119,7 +119,7 @@ export abstract class Client {
                 account,
                 startDate,
                 endDate,
-            }),
+            })
         );
         if (dialog.hktanVersion >= 6) {
             segments.push(
@@ -129,7 +129,7 @@ export abstract class Client {
                     process: "4",
                     segmentReference: "HKKAZ",
                     medium: dialog.tanMethods[0].name,
-                }),
+                })
             );
         }
         return await this.sendStatementRequest(dialog, segments);
@@ -146,7 +146,7 @@ export abstract class Client {
     public async completeStatements(
         savedDialog: DialogConfig,
         transactionReference: string,
-        tan: string,
+        tan: string
     ): Promise<Statement[]> {
         const dialog = this.createDialog(savedDialog);
         dialog.msgNo = dialog.msgNo + 1;
@@ -159,7 +159,7 @@ export abstract class Client {
                 segmentReference: "HKKAZ",
                 aref: transactionReference,
                 medium: dialog.tanMethods[0].name,
-            }),
+            })
         );
         return await this.sendStatementRequest(dialog, segments, tan);
     }
@@ -172,14 +172,14 @@ export abstract class Client {
             const request = this.createRequest(dialog, segments, tan);
             const response = await dialog.send(request);
             touchdowns = response.getTouchdowns(request);
-            touchdown = touchdowns.get("HKKAZ");
+            touchdown = touchdowns.get("HKKAZ") || "";
             responses.push(response);
         } while (touchdown);
         await dialog.end();
         const responseSegments: HIKAZ[] = responses.reduce((result, response: Response) => {
             result.push(...response.findSegments(HIKAZ));
             return result;
-        }, []);
+        }, [] as HIKAZ[]);
         const bookedString = responseSegments.map((segment) => segment.bookedTransactions || "").join("");
         const unprocessedStatements = await read(Buffer.from(bookedString, "utf-8"));
         return unprocessedStatements.map((statement) => {
@@ -203,7 +203,7 @@ export abstract class Client {
         await dialog.sync();
         await dialog.init();
         let touchdowns: Map<string, string>;
-        let touchdown: string;
+        let touchdown: string | undefined = "";
         const responses: Response[] = [];
         do {
             const request = this.createRequest(dialog, [
@@ -212,7 +212,7 @@ export abstract class Client {
                     version: dialog.hicdbVersion,
                     account,
                     painFormats: dialog.painFormats,
-                    touchdown,
+                    touchdown: touchdown || "",
                 }),
             ]);
             const response = await dialog.send(request);
@@ -224,7 +224,7 @@ export abstract class Client {
         const segments: HICDB[] = responses.reduce((result, response: Response) => {
             result.push(...response.findSegments(HICDB));
             return result;
-        }, []);
+        }, [] as HICDB[]);
 
         return segments.map((s) => s.standingOrder);
     }

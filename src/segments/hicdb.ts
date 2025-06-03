@@ -1,12 +1,12 @@
-import { SegmentClass } from "./segment";
-import { StandingOrder } from "../types";
-import { Parse } from "../parse";
 import {
-    document,
-    PaymentInstructionInformationSCT,
     CreditTransferTransactionInformationSCT,
     CustomerCreditTransferInitiationV03,
+    document,
+    PaymentInstructionInformationSCT,
 } from "../pain-formats";
+import { Parse } from "../parse";
+import { StandingOrder } from "../types";
+import { SegmentClass } from "./segment";
 
 export class HICDBProps {
     public segNo: number;
@@ -20,16 +20,12 @@ export class HICDBProps {
 export class HICDB extends SegmentClass(HICDBProps) {
     public type = "HICDB";
 
-    protected serialize(): string[][] { throw new Error("Not implemented."); }
+    protected serialize(): string[][] {
+        throw new Error("Not implemented.");
+    }
 
     protected deserialize(input: string[][]) {
-        const [
-            [],
-            [],
-            [ sepaMessage ],
-            [],
-            [ nextOrder, timeUnit, interval, orderDay, lastOrder ],
-        ] = input;
+        const [[], [], [sepaMessage], [], [nextOrder, timeUnit, interval, orderDay, lastOrder]] = input;
 
         const parsed: unknown = Parse.xml(sepaMessage);
 
@@ -40,20 +36,20 @@ export class HICDB extends SegmentClass(HICDBProps) {
         const jsonMessage: CustomerCreditTransferInitiationV03 = parsed.Document.CstmrCdtTrfInitn;
         const instructionInfo: PaymentInstructionInformationSCT = Array.isArray(jsonMessage.PmtInf)
             ? jsonMessage.PmtInf[0]
-            : jsonMessage.PmtInf as PaymentInstructionInformationSCT;
+            : (jsonMessage.PmtInf as PaymentInstructionInformationSCT);
         const creditTransaction: CreditTransferTransactionInformationSCT = Array.isArray(instructionInfo.CdtTrfTxInf)
             ? instructionInfo.CdtTrfTxInf[0]
-            : instructionInfo.CdtTrfTxInf as CreditTransferTransactionInformationSCT;
+            : (instructionInfo.CdtTrfTxInf as CreditTransferTransactionInformationSCT);
 
         this.standingOrder = {
             nextOrderDate: Parse.date(nextOrder),
             timeUnit,
             interval: Parse.num(interval),
             orderDay: Parse.num(orderDay),
-            lastOrderDate: lastOrder ? Parse.date(lastOrder) : null,
+            lastOrderDate: lastOrder ? Parse.date(lastOrder) : undefined,
             creationDate: new Date(jsonMessage.GrpHdr.CreDtTm),
-            amount: jsonMessage.GrpHdr.CtrlSum,
-            paymentPurpose: creditTransaction.RmtInf.Ustrd,
+            amount: jsonMessage.GrpHdr.CtrlSum || 0,
+            paymentPurpose: creditTransaction.RmtInf?.Ustrd || "",
             debitor: {
                 name: instructionInfo.Dbtr.Nm,
                 iban: instructionInfo.DbtrAcct.Id.IBAN,
@@ -62,14 +58,16 @@ export class HICDB extends SegmentClass(HICDBProps) {
             creditor: {
                 name: creditTransaction.Cdtr.Nm,
                 iban: creditTransaction.CdtrAcct.Id.IBAN,
-                bic: creditTransaction.CdtrAgt.FinInstnId.BIC,
+                bic: creditTransaction.CdtrAgt?.FinInstnId.BIC || "",
             },
         };
     }
 
     private isDocument(d: any): d is document {
-        return typeof d !== "undefined"
-            && typeof d.Document !== "undefined"
-            && typeof d.Document.CstmrCdtTrfInitn !== "undefined";
+        return (
+            typeof d !== "undefined" &&
+            typeof d.Document !== "undefined" &&
+            typeof d.Document.CstmrCdtTrfInitn !== "undefined"
+        );
     }
 }

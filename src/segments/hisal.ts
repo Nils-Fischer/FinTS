@@ -1,6 +1,6 @@
-import { SegmentClass } from "./segment";
-import { SEPAAccount } from "../types";
 import { Parse } from "../parse";
+import { SEPAAccount } from "../types";
+import { SegmentClass } from "./segment";
 
 export class HISALProps {
     public segNo: number;
@@ -20,19 +20,21 @@ export class HISALProps {
 export class HISAL extends SegmentClass(HISALProps) {
     public type = "HISAL";
 
-    protected serialize(): string[][] { throw new Error("Not implemented."); }
+    protected serialize(): string[][] {
+        throw new Error("Not implemented.");
+    }
 
     protected deserialize(input: string[][]) {
         const [
-            [ accountNumber, subAccount, _country, blz ],
-            [ productName ],
-            [ currency ],
-            [ _cb, booked ],
-            [ _cp, pending ],
-            [ dispo ],
-            [ available ],
+            [accountNumber, subAccount, _country, blz],
+            [productName],
+            [currency],
+            [_cb, booked],
+            [_cp, pending],
+            [dispo],
+            [available],
         ] = input;
-        this.account = { accountNumber, subAccount, blz, iban: null, bic: null };
+        this.account = { accountNumber, subAccount, blz, iban: "", bic: "" };
         this.productName = productName;
         this.currency = currency;
         this.bookedBalance = Parse.num(booked);

@@ -1,6 +1,6 @@
 import { Format } from "../format";
-import { SegmentClass } from "./segment";
 import { SEPAAccount } from "../types";
+import { SegmentClass } from "./segment";
 
 export class HKCDBProps {
     public segNo: number;
@@ -20,16 +20,18 @@ export class HKCDB extends SegmentClass(HKCDBProps) {
     protected serialize() {
         const { account, touchdown, painFormats } = this;
         const { iban, bic } = account;
-        const pain0101: string = painFormats.find(x => x.startsWith("urn") && x.indexOf("pain.001.001.03") !== -1);
-        const pain0103: string = painFormats.find(x => x.startsWith("urn") && x.indexOf("pain.001.003.03") !== -1);
+        const pain0101 = painFormats.find((x) => x.startsWith("urn") && x.indexOf("pain.001.001.03") !== -1);
+        const pain0103 = painFormats.find((x) => x.startsWith("urn") && x.indexOf("pain.001.003.03") !== -1);
         return [
             [iban, bic],
-            pain0101 || pain0103,
+            pain0101 || pain0103 || "",
             Format.empty(),
             Format.empty(),
             Format.stringEscaped(touchdown),
         ];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

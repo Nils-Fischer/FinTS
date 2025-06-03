@@ -1,4 +1,4 @@
-import { Section, PaymentReference, StructuredDescription } from "./types";
+import { PaymentReference, Section, StructuredDescription } from "./types";
 
 const detectionRegex = /(?:^|\?)(..)(.*?)(?:$|\?)/g;
 
@@ -12,16 +12,20 @@ const detectionRegex = /(?:^|\?)(..)(.*?)(?:$|\?)/g;
  */
 export function is86Structured(input: string) {
     const matches: RegExpExecArray[] = [];
-    let lastMatch: RegExpExecArray;
+    let lastMatch: RegExpExecArray | null;
     do {
         lastMatch = detectionRegex.exec(input);
-        matches.push(lastMatch);
+        if (lastMatch) matches.push(lastMatch);
     } while (lastMatch);
     const results = matches
-        .filter(match => match !== null)
-        .map(match => ({ code: Number(match[1]), value: match[2] }));
-    if (results.length === 0) { return false; }
-    if (results.some(result => isNaN(result.code))) { return false; }
+        .filter((match) => match !== null)
+        .map((match) => ({ code: Number(match[1]), value: match[2] }));
+    if (results.length === 0) {
+        return false;
+    }
+    if (results.some((result) => isNaN(result.code))) {
+        return false;
+    }
     return true;
 }
 
@@ -32,16 +36,12 @@ export function is86Structured(input: string) {
  *
  * @return The parsed date.
  */
-export function parsePaymentReferenceDate(content: string): Date {
+export function parsePaymentReferenceDate(content: string): Date | undefined {
     const groups = /DATUM\s+(\d+)\.(\d+)\.(\d+),\s+(\d+)\.(\d+)\s+UHR/.exec(content);
-    if (!groups){ return; }
-    return new Date(
-        Number(groups[3]),
-        Number(groups[2]) - 1,
-        Number(groups[1]),
-        Number(groups[4]),
-        Number(groups[5]),
-    );
+    if (!groups) {
+        return undefined;
+    }
+    return new Date(Number(groups[3]), Number(groups[2]) - 1, Number(groups[1]), Number(groups[4]), Number(groups[5]));
 }
 
 /**
@@ -53,7 +53,9 @@ export function parsePaymentReferenceDate(content: string): Date {
  */
 export function parsePaymentReferenceTan(content: string) {
     const groups = /(\d+)\.\s*TAN\s+(.*)/.exec(content);
-    if (!groups){ return; }
+    if (!groups) {
+        return;
+    }
     return {
         num: Number(groups[1]),
         value: groups[2],
@@ -69,32 +71,50 @@ export function parsePaymentReferenceTan(content: string) {
  * @return A parsed payment reference with all extracted data.
  */
 export function assemblePaymentReference(references: Section[]): PaymentReference {
-    let lastIdentifiedAttribute: keyof Omit<PaymentReference, "date"|"tan">;
+    let lastIdentifiedAttribute: keyof Omit<PaymentReference, "date" | "tan">;
     const result: PaymentReference = { raw: "" };
-    const add = (name: keyof Omit<PaymentReference, "date"|"tan">, content: string) => {
+    const add = (name: keyof Omit<PaymentReference, "date" | "tan">, content: string) => {
         lastIdentifiedAttribute = name;
         result[name] = content;
     };
     references
         .sort((a, b) => a.code - b.code)
         .forEach(({ content }) => {
-            if (content.startsWith("IBAN+")) { add("iban", content.substr(5)); }
-            else if (content.startsWith("BIC+")) { add("bic", content.substr(5)); }
-            else if (content.startsWith("EREF+")) { add("endToEndRef", content.substr(5)); }
-            else if (content.startsWith("KREF+")) { add("customerRef", content.substr(5)); }
-            else if (content.startsWith("MREF+")) { add("mandateRef", content.substr(5)); }
-            else if (content.startsWith("CRED+")) { add("creditorId", content.substr(5)); }
-            else if (content.startsWith("DEBT+")) { add("originatorId", content.substr(5)); }
-            else if (content.startsWith("COAM+")) { add("interestCompensation", content.substr(5)); }
-            else if (content.startsWith("OAMT+")) { add("originalTurnover", content.substr(5)); }
-            else if (content.startsWith("SVWZ+")) { add("text", content.substr(5)); }
-            else if (content.startsWith("ABWA+")) { add("divergingPrincipal", content.substr(5)); }
-            else if (content.startsWith("PURP+")) { add("purpose", content.substr(5)); }
-            else if (content.startsWith("BREF+")) { add("back", content.substr(5)); }
-            else if (content.startsWith("RREF+")) { add("back", content.substr(5)); }
-            else if (content.startsWith("DATUM ")) { result.date = parsePaymentReferenceDate(content); }
-            else if (/\d+\.\s*TAN/.test(content)) { result.tan = parsePaymentReferenceTan(content); }
-            else if (lastIdentifiedAttribute) { result[lastIdentifiedAttribute] += content; }
+            if (content.startsWith("IBAN+")) {
+                add("iban", content.substr(5));
+            } else if (content.startsWith("BIC+")) {
+                add("bic", content.substr(5));
+            } else if (content.startsWith("EREF+")) {
+                add("endToEndRef", content.substr(5));
+            } else if (content.startsWith("KREF+")) {
+                add("customerRef", content.substr(5));
+            } else if (content.startsWith("MREF+")) {
+                add("mandateRef", content.substr(5));
+            } else if (content.startsWith("CRED+")) {
+                add("creditorId", content.substr(5));
+            } else if (content.startsWith("DEBT+")) {
+                add("originatorId", content.substr(5));
+            } else if (content.startsWith("COAM+")) {
+                add("interestCompensation", content.substr(5));
+            } else if (content.startsWith("OAMT+")) {
+                add("originalTurnover", content.substr(5));
+            } else if (content.startsWith("SVWZ+")) {
+                add("text", content.substr(5));
+            } else if (content.startsWith("ABWA+")) {
+                add("divergingPrincipal", content.substr(5));
+            } else if (content.startsWith("PURP+")) {
+                add("purpose", content.substr(5));
+            } else if (content.startsWith("BREF+")) {
+                add("back", content.substr(5));
+            } else if (content.startsWith("RREF+")) {
+                add("back", content.substr(5));
+            } else if (content.startsWith("DATUM ")) {
+                result.date = parsePaymentReferenceDate(content);
+            } else if (/\d+\.\s*TAN/.test(content)) {
+                result.tan = parsePaymentReferenceTan(content);
+            } else if (lastIdentifiedAttribute) {
+                result[lastIdentifiedAttribute] += content;
+            }
             result.raw += content;
             return result;
         });
@@ -110,13 +130,13 @@ export function assemblePaymentReference(references: Section[]): PaymentReferenc
  * @return The parsed structured description.
  */
 export function parse86Structured(input: string): StructuredDescription {
-    let iban: string;
-    let text: string;
-    let bic: string;
-    let primaNota: string;
+    let iban = "";
+    let text = "";
+    let bic = "";
+    let primaNota = "";
     let currentContent = "";
     let inHeader = true;
-    let sectionCode: number;
+    let sectionCode: number | undefined;
     const references: Section[] = [];
     const names: Section[] = [];
     // The header has been parsed fully. Store the section code and begin parsing the content.
@@ -128,18 +148,20 @@ export function parse86Structured(input: string): StructuredDescription {
     // A questionmark has been encountered, hence the content of the current section is complete.
     // Store the parsed data and continue to read the next header.
     const flushSection = () => {
-        if (sectionCode === 0) {
-            text = currentContent;
-        } else if (sectionCode === 10) {
-            primaNota = currentContent;
-        } else if ((sectionCode >= 20 && sectionCode < 30) || (sectionCode >= 60 && sectionCode <= 63)) {
-            references.push({ code: sectionCode, content: currentContent });
-        } else if (sectionCode === 30) {
-            bic = currentContent;
-        } else if (sectionCode === 31) {
-            iban = currentContent;
-        } else if (sectionCode >= 32 && sectionCode <= 33) {
-            names.push({ code: sectionCode, content: currentContent });
+        if (sectionCode !== undefined) {
+            if (sectionCode === 0) {
+                text = currentContent;
+            } else if (sectionCode === 10) {
+                primaNota = currentContent;
+            } else if ((sectionCode >= 20 && sectionCode < 30) || (sectionCode >= 60 && sectionCode <= 63)) {
+                references.push({ code: sectionCode, content: currentContent });
+            } else if (sectionCode === 30) {
+                bic = currentContent;
+            } else if (sectionCode === 31) {
+                iban = currentContent;
+            } else if (sectionCode >= 32 && sectionCode <= 33) {
+                names.push({ code: sectionCode, content: currentContent });
+            }
         }
         currentContent = "";
         sectionCode = undefined;
@@ -165,7 +187,7 @@ export function parse86Structured(input: string): StructuredDescription {
     const reference = assemblePaymentReference(references);
     const name = names
         .sort((a, b) => a.code - b.code)
-        .map(recipient => recipient.content)
+        .map((recipient) => recipient.content)
         .join("");
     return { reference, name, iban, text, bic, primaNota };
 }

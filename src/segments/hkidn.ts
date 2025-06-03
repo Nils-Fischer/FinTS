@@ -1,6 +1,6 @@
+import { COUNTRY_CODE } from "../constants";
 import { Format } from "../format";
 import { SegmentClass } from "./segment";
-import { COUNTRY_CODE } from "../constants";
 
 export class HKIDNProps {
     public blz: string;
@@ -28,10 +28,12 @@ export class HKIDN extends SegmentClass(HKIDNProps) {
         return [
             [Format.num(COUNTRY_CODE), blz],
             Format.stringEscaped(name),
-            systemId,
-            Format.num(customerId),
+            systemId || "",
+            Format.num(customerId || 0),
         ];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

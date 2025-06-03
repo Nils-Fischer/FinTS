@@ -1,5 +1,5 @@
-import { SegmentClass } from "./segment";
 import { Format } from "../format";
+import { SegmentClass } from "./segment";
 
 export class HNHBSProps {
     public segNo: number;
@@ -18,8 +18,10 @@ export class HNHBS extends SegmentClass(HNHBSProps) {
     }
 
     protected serialize() {
-        return [ Format.num(this.msgNo) ];
+        return [Format.num(this.msgNo)];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

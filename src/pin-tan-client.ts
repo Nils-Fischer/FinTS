@@ -1,10 +1,10 @@
 import { Client } from "./client";
+import { PRODUCT_NAME } from "./constants";
 import { Dialog, DialogConfig } from "./dialog";
-import { Request } from "./request";
 import { HttpConnection } from "./http-connection";
+import { Request } from "./request";
 import { Segment } from "./segments";
 import { Connection } from "./types";
-import { PRODUCT_NAME } from "./constants";
 
 /**
  * Set of options needed to construct a `PinTanClient`.
@@ -50,7 +50,7 @@ export class PinTanClient extends Client {
         super();
         this.config = config;
         const { url, debug } = config;
-        this.connection = new HttpConnection({ url, debug });
+        this.connection = new HttpConnection({ url, debug: debug || false });
     }
 
     public createDialog(dialogConfig?: DialogConfig) {

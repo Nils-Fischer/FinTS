@@ -1,9 +1,29 @@
 {
-    "extends": "./tsconfig-build.json",
     "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "lib": ["ES2022", "DOM"],
         "outDir": "dist",
-        "rootDir": "src",
-        "sourceMap": true
+        "rootDir": ".",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "noImplicitReturns": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": false,
+        "allowUnusedLabels": false,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
-    "include": ["src/**/*.ts", "example.ts"]
+    "include": ["src/**/*.ts", "test.ts"],
+    "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**/*"]
 }

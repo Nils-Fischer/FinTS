@@ -1,5 +1,5 @@
-import { SegmentClass } from "./segment";
 import { ReturnValue } from "../return-value";
+import { SegmentClass } from "./segment";
 
 export class HIRMGProps {
     public segNo: number;
@@ -17,19 +17,21 @@ export class HIRMG extends SegmentClass(HIRMGProps) {
         this.version = 2;
     }
 
-    protected serialize(): string[][] { throw new Error("Not implemented."); }
+    protected serialize(): string[][] {
+        throw new Error("Not implemented.");
+    }
 
     protected deserialize(input: string[][]) {
         this.returnValues = new Map();
         input
-            .map(dataElements => {
-                const [ code, , message, ...parameters ] = dataElements;
+            .map((dataElements) => {
+                const [code, , message, ...parameters] = dataElements;
                 return new ReturnValue({
                     code,
                     message,
                     parameters,
                 });
             })
-            .forEach(response => this.returnValues.set(response.code, response));
+            .forEach((response) => this.returnValues.set(response.code, response));
     }
 }

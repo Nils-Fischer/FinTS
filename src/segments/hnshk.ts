@@ -1,6 +1,6 @@
-import { SegmentClass } from "./segment";
+import { COUNTRY_CODE, SECURITY_BOUNDARY, SECURITY_FUNCTION, SECURITY_SUPPLIER_ROLE } from "../constants";
 import { Format } from "../format";
-import { SECURITY_BOUNDARY, SECURITY_SUPPLIER_ROLE, COUNTRY_CODE, SECURITY_FUNCTION } from "../constants";
+import { SegmentClass } from "./segment";
 
 export class HNSHKProps {
     public segNo: number;
@@ -28,7 +28,7 @@ export class HNSHK extends SegmentClass(HNSHKProps) {
         const { secRef, blz, name, systemId, profileVersion, securityFunction } = this;
         return [
             ["PIN", Format.num(profileVersion)],
-            securityFunction,
+            securityFunction || "",
             Format.num(secRef),
             Format.num(SECURITY_BOUNDARY),
             Format.num(SECURITY_SUPPLIER_ROLE),
@@ -41,5 +41,7 @@ export class HNSHK extends SegmentClass(HNSHKProps) {
         ];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

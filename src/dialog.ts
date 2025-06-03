@@ -1,13 +1,13 @@
-import { Connection } from "./types";
-import { HKIDN, HKVVB, HKSYN, HKTAN, HKEND, HISALS, HIKAZS, HICDBS, HIUPD, HITANS, Segment } from "./segments";
-import { Request } from "./request";
-import { Response } from "./response";
-import { TanMethod } from "./tan-method";
-import { escapeFinTS } from "./utils";
+import { PRODUCT_NAME } from "./constants";
 import { ResponseError } from "./errors/response-error";
 import { TanRequiredError } from "./errors/tan-required-error";
+import { Request } from "./request";
+import { Response } from "./response";
+import { HICDBS, HIKAZS, HISALS, HITANS, HIUPD, HKEND, HKIDN, HKSYN, HKTAN, HKVVB, Segment } from "./segments";
 import { HITAN } from "./segments/hitan";
-import { PRODUCT_NAME } from "./constants";
+import { TanMethod } from "./tan-method";
+import { Connection } from "./types";
+import { escapeFinTS } from "./utils";
 
 /**
  * Properties passed to configure a `Dialog`.
@@ -134,7 +134,7 @@ export class Dialog extends DialogConfig {
             segments.push(new HKTAN({ segNo: 5, version: 6, process: "4" }));
         }
         const response: Response = await this.send(
-            new Request({ blz, name, pin, systemId: "0", dialogId, msgNo, segments, tanMethods }),
+            new Request({ blz, name, pin, systemId: "0", dialogId, msgNo, segments, tanMethods })
         );
         this.dialogId = response.dialogId;
         return response;
@@ -170,11 +170,11 @@ export class Dialog extends DialogConfig {
         if (response.returnValues().has("0030")) {
             const hitan = response.findSegment(HITAN);
             throw new TanRequiredError(
-                response.returnValues().get("0030").message,
+                response.returnValues().get("0030")?.message || "",
                 hitan.transactionReference,
                 hitan.challengeText,
                 hitan.challengeMedia,
-                this,
+                this
             );
         }
         this.msgNo++;

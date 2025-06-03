@@ -1,7 +1,7 @@
-import { Format } from "../format";
-import { SegmentClass } from "./segment";
-import { SEPAAccount } from "../types";
 import { COUNTRY_CODE } from "../constants";
+import { Format } from "../format";
+import { SEPAAccount } from "../types";
+import { SegmentClass } from "./segment";
 
 export class HKSALProps {
     public segNo: number;
@@ -23,16 +23,14 @@ export class HKSAL extends SegmentClass(HKSALProps) {
         if (![4, 5, 6, 7].includes(version)) {
             throw new Error(`Unsupported HKSAL version ${version}.`);
         }
-        const serializedAccount = version === 7 ?
-            [iban, bic, accountNumber, subAccount, String(COUNTRY_CODE), blz] :
-            [accountNumber, subAccount, String(COUNTRY_CODE), blz];
-        return [
-            serializedAccount,
-            Format.jn(false),
-            Format.empty(),
-            Format.stringEscaped(touchdown),
-        ];
+        const serializedAccount =
+            version === 7
+                ? [iban, bic, accountNumber, subAccount || "", String(COUNTRY_CODE), blz]
+                : [accountNumber, subAccount || "", String(COUNTRY_CODE), blz];
+        return [serializedAccount, Format.jn(false), Format.empty(), Format.stringEscaped(touchdown)];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

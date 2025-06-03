@@ -1,6 +1,6 @@
+import { LANG_DE, PRODUCT_NAME, PRODUCT_VERSION } from "../constants";
 import { Format } from "../format";
 import { SegmentClass } from "./segment";
-import { LANG_DE, PRODUCT_NAME, PRODUCT_VERSION } from "../constants";
 
 export class HKVVBProps {
     public segNo: number;
@@ -26,11 +26,13 @@ export class HKVVB extends SegmentClass(HKVVBProps) {
         return [
             Format.num(0),
             Format.num(0),
-            Format.num(lang),
+            Format.num(lang || 0),
             Format.stringEscaped(productId),
             Format.stringEscaped(PRODUCT_VERSION),
         ];
     }
 
-    protected deserialize() { throw new Error("Not implemented."); }
+    protected deserialize() {
+        throw new Error("Not implemented.");
+    }
 }

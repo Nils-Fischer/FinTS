@@ -1,6 +1,6 @@
 import { Parse } from "../parse";
-import { SegmentClass } from "./segment";
 import { TanMethod, tanMethodArgumentMap } from "../tan-method";
+import { SegmentClass } from "./segment";
 
 export class HITANSProps {
     public segNo: number;
@@ -16,19 +16,16 @@ export class HITANSProps {
 export class HITANS extends SegmentClass(HITANSProps) {
     public type = "HITANS";
 
-    protected serialize(): string[][] { throw new Error("Not implemented."); }
+    protected serialize(): string[][] {
+        throw new Error("Not implemented.");
+    }
 
     protected deserialize(input: string[][]) {
         if (![1, 2, 3, 4, 5, 6].includes(this.version)) {
             throw new Error(`Unimplemented TAN method version ${this.version} encountered.`);
         }
-        const [
-            [ maxRequests ],
-            [ minSignatures ],
-            [ securityClass ],
-            args,
-        ] = input;
-        const [ oneStepAllowed, multiple, securityProfile, ...restArgs ] = args;
+        const [[maxRequests], [minSignatures], [securityClass], args] = input;
+        const [oneStepAllowed, multiple, securityProfile, ...restArgs] = args;
         let tanMethodArgs: string[];
         if (this.version === 1) {
             tanMethodArgs = restArgs.slice(1);
@@ -41,7 +38,7 @@ export class HITANS extends SegmentClass(HITANSProps) {
         this.oneStepAllowed = Parse.bool(oneStepAllowed);
         this.securityProfile = Parse.num(securityProfile);
         this.multiple = Parse.bool(multiple);
-        const tanMethodArgumentsLength = tanMethodArgumentMap.get(this.version).length;
+        const tanMethodArgumentsLength = tanMethodArgumentMap.get(this.version)?.length || 0;
         this.tanMethods = [];
         for (let i = 0; i < tanMethodArgs.length; i += tanMethodArgumentsLength) {
             const currentArgs = tanMethodArgs.slice(i, i + tanMethodArgumentsLength);

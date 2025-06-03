@@ -1,5 +1,5 @@
-import { SegmentClass } from "./segment";
 import { SEPAAccountHiupd } from "../types";
+import { SegmentClass } from "./segment";
 
 export class HIUPDProps {
     public segNo: number;

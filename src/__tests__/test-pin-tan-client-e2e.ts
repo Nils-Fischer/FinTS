@@ -1,9 +1,9 @@
 /* tslint:disable:no-console */
+import banks from "fints-institute-db";
 import * as fs from "fs";
 import { TanRequiredError } from "../errors/tan-required-error";
 import { PinTanClient } from "../pin-tan-client";
 import { SEPAAccount } from "../types";
-import banks from "fints-institute-db";
 
 const name = process.env.FINTS_USER;
 const pin = process.env.FINTS_PASSWORD;
@@ -60,13 +60,13 @@ test("complete statements", async () => {
 
     try {
         const tanRequiredError = JSON.parse(
-            (fs.readFileSync("/tmp/statements-status.txt") as Buffer).toString(),
+            (fs.readFileSync("/tmp/statements-status.txt") as Buffer).toString()
         ) as TanRequiredError;
 
         const statements = await client.completeStatements(
             tanRequiredError.dialog,
             tanRequiredError.transactionReference,
-            tan,
+            tan
         );
         expect(statements.length).toBeGreaterThan(0);
         fs.unlinkSync("/tmp/statements-status.txt");
