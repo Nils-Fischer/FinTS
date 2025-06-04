@@ -3,7 +3,20 @@ import { ResponseError } from "./errors/response-error";
 import { TanRequiredError } from "./errors/tan-required-error";
 import { Request } from "./request";
 import { Response } from "./response";
-import { HICDBS, HIKAZS, HISALS, HITANS, HIUPD, HKEND, HKIDN, HKSYN, HKTAN, HKVVB, Segment } from "./segments";
+import {
+    HICDBS,
+    HIKAZS,
+    HISALS,
+    HITANS,
+    HIUPD,
+    HKEND,
+    HKIDN,
+    HKSYN,
+    HKTAN,
+    HKVVB,
+    Segment,
+    SegmentProps,
+} from "./segments";
 import { HITAN } from "./segments/hitan";
 import { TanMethod } from "./tan-method";
 import { Connection } from "./types";
@@ -126,7 +139,7 @@ export class Dialog extends DialogConfig {
      */
     public async init(): Promise<Response> {
         const { blz, name, pin, dialogId, msgNo, tanMethods } = this;
-        const segments: Segment<any>[] = [
+        const segments: Segment<SegmentProps>[] = [
             new HKIDN({ segNo: 3, blz, name, systemId: "0" }),
             new HKVVB({ segNo: 4, productId: this.productId, lang: 0 }),
         ];

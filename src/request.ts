@@ -1,5 +1,5 @@
 import { HEADER_LENGTH } from "./constants";
-import { HNHBK, HNHBS, HNSHA, HNSHK, HNVSD, HNVSK, Segment } from "./segments";
+import { HNHBK, HNHBS, HNSHA, HNSHK, HNVSD, HNVSK, Segment, SegmentProps } from "./segments";
 import { TanMethod } from "./tan-method";
 
 /**
@@ -44,7 +44,7 @@ export class RequestConfig {
     /**
      * All segments that should be transmitted in the HNVSD segment of the request.
      */
-    public segments: Segment<any>[] = [];
+    public segments: Segment<SegmentProps>[] = [];
 }
 
 /**
@@ -131,7 +131,7 @@ export class Request extends RequestConfig {
             // Add `1` to the index because of HNSHA.
             new HNHBS({ segNo: segmentCount + 1, msgNo }),
         ];
-        let length =
+        const length =
             segmentsWithoutHeader.reduce((result, segment) => result + String(segment).length, 0) +
             HEADER_LENGTH +
             dialogId.length +

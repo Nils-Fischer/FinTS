@@ -3,7 +3,7 @@ import { Request } from "./request";
 import { Response } from "./response";
 
 export interface Constructable<T> {
-    new (...args: any[]): T;
+    new (...args: unknown[]): T;
 }
 
 /**

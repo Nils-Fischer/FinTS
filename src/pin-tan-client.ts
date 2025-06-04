@@ -3,7 +3,7 @@ import { PRODUCT_NAME } from "./constants";
 import { Dialog, DialogConfig } from "./dialog";
 import { HttpConnection } from "./http-connection";
 import { Request } from "./request";
-import { Segment } from "./segments";
+import { Segment, SegmentProps } from "./segments";
 import { Connection } from "./types";
 
 /**
@@ -59,7 +59,7 @@ export class PinTanClient extends Client {
         return new Dialog(dialogConfig ? dialogConfig : { blz, name, pin, systemId: "0", productId }, connection);
     }
 
-    public createRequest(dialog: Dialog, segments: Segment<any>[], tan?: string) {
+    public createRequest(dialog: Dialog, segments: Segment<SegmentProps>[], tan?: string) {
         const { blz, name, pin } = this.config;
         const { systemId, dialogId, msgNo, tanMethods } = dialog;
         return new Request({ blz, name, pin, systemId, dialogId, msgNo, segments, tanMethods, tan });

@@ -79,7 +79,7 @@ export function parse(input: string): string[][][] {
         }
         // Handle control characters or append default characters to string.
         switch (character) {
-            case "@":
+            case "@": {
                 i++;
                 let lengthString = "";
                 for (; i < input.length; ++i) {
@@ -96,6 +96,7 @@ export function parse(input: string): string[][][] {
                 }
                 i--;
                 break;
+            }
             case "?":
                 escapeActive = true;
                 break;

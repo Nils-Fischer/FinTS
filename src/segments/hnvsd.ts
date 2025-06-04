@@ -1,6 +1,6 @@
 import { Format } from "../format";
 import { parse } from "../utils";
-import { Segment, SegmentClass } from "./segment";
+import { Segment, SegmentClass, SegmentProps } from "./segment";
 
 export class HNVSDProps {
     public segNo: number;
@@ -8,7 +8,7 @@ export class HNVSDProps {
      * Only populated by constructor.
      * Deserializing ignores this property.
      */
-    public segments: Segment<any>[];
+    public segments: Segment<SegmentProps>[];
 
     /**
      * Populated when deserializing.

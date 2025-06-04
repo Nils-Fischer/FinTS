@@ -1,6 +1,6 @@
 import { Request } from "./request";
 import { ReturnValue } from "./return-value";
-import { HIBPA, HIRMG, HIRMS, HISPAS, HISYN, HITANS, HNHBK, HNVSD, Segment } from "./segments";
+import { HIBPA, HIRMG, HIRMS, HISPAS, HISYN, HITANS, HNHBK, HNVSD, Segment, SegmentProps } from "./segments";
 import { TanMethod } from "./tan-method";
 import { Constructable } from "./types";
 import { parse } from "./utils";
@@ -29,7 +29,7 @@ export class Response {
      *
      * @return An array of all matching segments. Can be empty if no segements matched the specified type.
      */
-    public findSegments<T extends Segment<any>>(segmentClass: Constructable<T>): T[] {
+    public findSegments<T extends Segment<SegmentProps>>(segmentClass: Constructable<T>): T[] {
         const matchingStrings = this.segmentStrings.filter((str) => str[0][0] === segmentClass.name);
         return matchingStrings.map((segmentString) => {
             const segment = new segmentClass(segmentString);
@@ -49,7 +49,7 @@ export class Response {
      *
      * @return The deserialized matching segment. Can be `undefined` if no segement matched the specified type.
      */
-    public findSegment<T extends Segment<any>>(segmentClass: Constructable<T>): T {
+    public findSegment<T extends Segment<SegmentProps>>(segmentClass: Constructable<T>): T {
         const segments = this.findSegments(segmentClass);
         return segments[0];
     }
@@ -160,9 +160,9 @@ export class Response {
      *
      * @return All segments of the specified type that reference the provided segment. Might be an empty array.
      */
-    public findSegmentForReference<T extends Segment<any>>(
+    public findSegmentForReference<T extends Segment<SegmentProps>>(
         segmentClass: Constructable<T>,
-        segment: Segment<any>
+        segment: Segment<SegmentProps>
     ): T | undefined {
         return this.findSegments(segmentClass).find((current) => current.reference === segment.segNo);
     }
@@ -196,7 +196,7 @@ export class Response {
      *
      * @return The maximum version of the specified segment class version, or `0` if no segment was found.
      */
-    public segmentMaxVersion(segment: Constructable<Segment<any>>) {
+    public segmentMaxVersion(segment: Constructable<Segment<SegmentProps>>) {
         return this.findSegments(segment).reduce((max, current) => (current.version > max ? current.version : max), 0);
     }
 

@@ -4,7 +4,7 @@ import { parse86Structured } from "./mt940-86-structured";
 import { Parse } from "./parse";
 import { Request } from "./request";
 import { Response } from "./response";
-import { HICDB, HIKAZ, HISAL, HISPA, HKCDB, HKKAZ, HKSAL, HKSPA, HKTAN, Segment } from "./segments";
+import { HICDB, HIKAZ, HISAL, HISPA, HKCDB, HKKAZ, HKSAL, HKSPA, HKTAN, Segment, SegmentProps } from "./segments";
 import { Balance, SEPAAccount, StandingOrder, Statement } from "./types";
 
 /**
@@ -19,7 +19,7 @@ export abstract class Client {
     /**
      * Create a request.
      */
-    protected abstract createRequest(dialog: Dialog, segments: Segment<any>[], tan?: string): Request;
+    protected abstract createRequest(dialog: Dialog, segments: Segment<SegmentProps>[], tan?: string): Request;
 
     /**
      * Fetch a list of all SEPA accounts accessible by the user.
@@ -110,7 +110,7 @@ export abstract class Client {
         const dialog = this.createDialog();
         await dialog.sync();
         await dialog.init();
-        const segments: Segment<any>[] = [];
+        const segments: Segment<SegmentProps>[] = [];
         segments.push(
             new HKKAZ({
                 segNo: 3,
@@ -149,7 +149,7 @@ export abstract class Client {
     ): Promise<Statement[]> {
         const dialog = this.createDialog(savedDialog);
         dialog.msgNo = dialog.msgNo + 1;
-        const segments: Segment<any>[] = [];
+        const segments: Segment<SegmentProps>[] = [];
         segments.push(
             new HKTAN({
                 segNo: 3,
@@ -163,7 +163,11 @@ export abstract class Client {
         return await this.sendStatementRequest(dialog, segments, tan);
     }
 
-    private async sendStatementRequest(dialog: Dialog, segments: Segment<any>[], tan?: string): Promise<Statement[]> {
+    private async sendStatementRequest(
+        dialog: Dialog,
+        segments: Segment<SegmentProps>[],
+        tan?: string
+    ): Promise<Statement[]> {
         let touchdowns: Map<string, string>;
         let touchdown: string;
         const responses: Response[] = [];

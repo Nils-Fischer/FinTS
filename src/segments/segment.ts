@@ -103,7 +103,9 @@ export function SegmentClass<TProps extends SegmentProps>(
     propsClass: Constructable<TProps>
 ): Constructable<TProps & Segment<TProps>> {
     abstract class TempSegment extends Segment<TProps> {}
-    const mutableClass: any = TempSegment;
+    const mutableClass: Constructable<TProps & Segment<TProps>> = TempSegment as unknown as Constructable<
+        TProps & Segment<TProps>
+    >;
 
     Object.getOwnPropertyNames(propsClass.prototype)
         .filter((name) => name !== "constructor")

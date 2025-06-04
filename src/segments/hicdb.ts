@@ -63,11 +63,12 @@ export class HICDB extends SegmentClass(HICDBProps) {
         };
     }
 
-    private isDocument(d: any): d is document {
+    private isDocument(d: unknown): d is document {
         return (
             typeof d !== "undefined" &&
-            typeof d.Document !== "undefined" &&
-            typeof d.Document.CstmrCdtTrfInitn !== "undefined"
+            d !== null &&
+            typeof (d as { Document?: unknown }).Document !== "undefined" &&
+            (d as { Document?: { CstmrCdtTrfInitn?: unknown } }).Document?.CstmrCdtTrfInitn !== "undefined"
         );
     }
 }
